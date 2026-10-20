@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches: ['*.x']
+  pull_request:
+    branches: ['*.x']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # runtime isn't on a public maven yet, build it from the same branch
+      - uses: actions/checkout@v4
+        with:
+          repository: fy2ne/muto
+          ref: ${{ github.ref_name }}
+          path: runtime
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Runtime to mavenLocal
+        working-directory: runtime
+        run: |
+          chmod +x ./gradlew
+          ./gradlew publishToMavenLocal -x test
+
+      - name: Build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: muto-menu-jar
+          path: build/libs/*.jar
+          if-no-files-found: error
