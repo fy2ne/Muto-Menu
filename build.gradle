@@ -22,6 +22,17 @@ dependencies {
 	implementation "me.fy2ne:muto:${project.muto_version}"
 }
 
+sourceSets {
+	stubs {
+		compileClasspath += sourceSets.main.compileClasspath
+	}
+	main {
+		compileClasspath += sourceSets.stubs.output
+	}
+}
+
+compileJava.dependsOn compileStubsJava
+
 processResources {
 	inputs.property "version", project.version
 	inputs.property "muto_version", project.muto_version

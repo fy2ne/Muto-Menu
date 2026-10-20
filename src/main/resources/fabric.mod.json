@@ -3,7 +3,7 @@
   "id": "muto_menu",
   "version": "${version}",
   "name": "Muto Menu",
-  "description": "Mods screen for Muto Runtime. Enable, disable and watch your mods folder live, no restart.",
+  "description": "Native ModMenu integration for Muto Runtime. Manage, toggle, filter, and hot-reload mods directly inside ModMenu.",
   "authors": [
     "fy2ne"
   ],
@@ -18,14 +18,20 @@
   "entrypoints": {
     "client": [
       "me.fy2ne.muto.menu.MenuMod"
+    ],
+    "modmenu": [
+      "me.fy2ne.muto.menu.plugin.MutoModMenuPlugin"
     ]
   },
+  "mixins": [
+    "muto-menu.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.16.0",
     "fabric-api": ">=0.144.1",
     "minecraft": ">=26.1 <27.0",
     "java": ">=25",
-    "muto": "~0.3.0-beta"
+    "muto": ">=0.3.0-beta",
+    "modmenu": "*"
   }
 }
-

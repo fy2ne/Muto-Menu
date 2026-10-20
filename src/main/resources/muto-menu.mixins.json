@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.fy2ne.muto.menu.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ModMenuScreenMixin",
+    "ModBadgeRendererMixin",
+    "ModListWidgetMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
