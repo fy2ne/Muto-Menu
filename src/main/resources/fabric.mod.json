@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "muto_menu",
+  "version": "${version}",
+  "name": "Muto Menu",
+  "description": "Mods screen for Muto Runtime. Enable, disable and watch your mods folder live, no restart.",
+  "authors": [
+    "fy2ne"
+  ],
+  "contact": {
+    "homepage": "https://muto.fy2ne.me/menu",
+    "sources": "https://github.com/fy2ne/muto-menu",
+    "issues": "https://github.com/fy2ne/muto-menu/issues"
+  },
+  "license": "LGPL-3.0-only",
+  "icon": "assets/muto_menu/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.fy2ne.muto.menu.MenuMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": ">=0.144.1",
+    "minecraft": ">=26.1 <27.0",
+    "java": ">=25",
+    "muto": "~0.3.0-beta"
+  }
+}
