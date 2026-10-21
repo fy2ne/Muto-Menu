@@ -322,6 +322,14 @@ public abstract class ModMenuScreenMixin extends Screen {
                 } else {
                     this.configureButton.visible = false;
                 }
+            } else {
+                if (supportsConfig) {
+                    this.configureButton.visible = true;
+                    this.configureButton.active = true;
+                    this.configureButton.setTooltip(null);
+                } else {
+                    this.configureButton.visible = false;
+                }
             }
         }
 
