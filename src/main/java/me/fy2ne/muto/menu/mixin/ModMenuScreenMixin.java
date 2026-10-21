@@ -190,7 +190,13 @@ public abstract class ModMenuScreenMixin extends Screen {
             if (this.minecraft != null) {
                 this.minecraft.setScreenAndShow(new MutoModChangesScreen(this, () -> {
                     if (this.minecraft != null) {
-                        MutoApi.reloadWithBoundary(this);
+                        this.minecraft.setScreenAndShow(null);
+                        this.minecraft.reloadResourcePacks();
+                        MutoApi.reloadAsync().thenAccept(res -> {
+                            this.minecraft.execute(() -> {
+                                this.minecraft.setScreenAndShow(new com.terraformersmc.modmenu.gui.ModsScreen(null));
+                            });
+                        });
                     }
                 }));
             }
@@ -299,8 +305,9 @@ public abstract class ModMenuScreenMixin extends Screen {
 
         boolean isProtected = ModStateManager.INSTANCE.isProtectedMod(modId);
         boolean isLoaded = FabricLoader.getInstance().getModContainer(modId).isPresent();
-        boolean isDisabled = DisabledModsRegistry.isDisabled(modId);
-        boolean isUnloaded = !isLoaded && !isDisabled;
+        boolean isRegistryDisabled = DisabledModsRegistry.isDisabled(modId);
+        boolean isDisabled = (!isLoaded && isRegistryDisabled) || (isLoaded && isRegistryDisabled);
+        boolean isUnloaded = !isLoaded && !isRegistryDisabled;
         boolean isStaged = ModStateManager.INSTANCE.isStaged(modId);
 
         // Handle configure button for disabled mods: keep visible if mod supports config, but disable it with tooltip

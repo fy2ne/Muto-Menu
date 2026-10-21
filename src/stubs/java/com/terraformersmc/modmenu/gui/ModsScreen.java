@@ -17,6 +17,10 @@ public class ModsScreen extends Screen {
     protected SpriteIconButton filtersButton;
     protected SpriteIconButton configureButton;
 
+    public ModsScreen(Screen previousScreen) {
+        super(Component.literal("Mods"));
+    }
+
     protected ModsScreen(Component title) {
         super(title);
     }
