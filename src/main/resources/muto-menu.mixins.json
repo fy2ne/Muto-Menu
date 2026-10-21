@@ -6,7 +6,8 @@
   "client": [
     "ModMenuScreenMixin",
     "ModBadgeRendererMixin",
-    "ModListWidgetMixin"
+    "ModListWidgetMixin",
+    "FabricModMixin"
   ],
   "injectors": {
     "defaultRequire": 1

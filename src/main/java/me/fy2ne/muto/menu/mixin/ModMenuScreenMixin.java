@@ -191,7 +191,6 @@ public abstract class ModMenuScreenMixin extends Screen {
                 this.minecraft.setScreenAndShow(new MutoModChangesScreen(this, () -> {
                     if (this.minecraft != null) {
                         this.minecraft.setScreenAndShow(null);
-                        this.minecraft.reloadResourcePacks();
                         MutoApi.reloadAsync().thenAccept(res -> {
                             this.minecraft.execute(() -> {
                                 this.minecraft.setScreenAndShow(new com.terraformersmc.modmenu.gui.ModsScreen(null));

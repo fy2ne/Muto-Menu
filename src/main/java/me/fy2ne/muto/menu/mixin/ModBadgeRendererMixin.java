@@ -47,23 +47,24 @@ public abstract class ModBadgeRendererMixin {
         }
 
         if (isStaged) {
-            boolean nextState = ModStateManager.INSTANCE.getStagedState(modId);
-            if (nextState) {
-                drawBadge(graphics, Component.literal(isLoaded ? "Pending: On" : "Pending: Load").getVisualOrderText(), 0xFF55FF55, 0x88114411, mouseX, mouseY);
+            boolean isUnloaded = !isLoaded && !isRegistryDisabled;
+            if (isUnloaded) {
+                drawBadge(graphics, Component.literal("Pending: Load").getVisualOrderText(), 0xFF55FF55, 0x88114411, mouseX, mouseY);
             } else {
-                drawBadge(graphics, Component.literal("Pending: Off").getVisualOrderText(), 0xFFFFAA00, 0x88553300, mouseX, mouseY);
+                boolean nextState = ModStateManager.INSTANCE.getStagedState(modId);
+                if (nextState) {
+                    drawBadge(graphics, Component.literal("Pending: On").getVisualOrderText(), 0xFF55FF55, 0x88114411, mouseX, mouseY);
+                } else {
+                    drawBadge(graphics, Component.literal("Pending: Off").getVisualOrderText(), 0xFFFFAA00, 0x88553300, mouseX, mouseY);
+                }
             }
             return;
         }
 
-        if (!isLoaded) {
-            if (isRegistryDisabled) {
-                drawBadge(graphics, Component.literal("Disabled").getVisualOrderText(), 0xFFFF5555, 0x88551111, mouseX, mouseY);
-            } else {
-                drawBadge(graphics, Component.literal("Unloaded").getVisualOrderText(), 0xFFFFCC00, 0x88554400, mouseX, mouseY);
-            }
-        } else if (isRegistryDisabled) {
-            drawBadge(graphics, Component.literal("Pending: Off").getVisualOrderText(), 0xFFFFAA00, 0x88553300, mouseX, mouseY);
+        if (isRegistryDisabled) {
+            drawBadge(graphics, Component.literal("Disabled").getVisualOrderText(), 0xFFFF5555, 0x88551111, mouseX, mouseY);
+        } else if (!isLoaded) {
+            drawBadge(graphics, Component.literal("Unloaded").getVisualOrderText(), 0xFFFFCC00, 0x88554400, mouseX, mouseY);
         }
     }
 }
