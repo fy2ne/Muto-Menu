@@ -1,11 +1,10 @@
 package me.fy2ne.muto.menu.mixin;
 
+import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import me.fy2ne.muto.engine.ModDependencyAnalyzer;
 import me.fy2ne.muto.menu.MenuConfig;
-import me.fy2ne.muto.mods.DisabledModsRegistry;
 import me.fy2ne.muto.mods.ModStateManager;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -26,6 +25,18 @@ public abstract class ModBadgeRendererMixin {
     protected Mod mod;
 
     @Shadow
+    protected int startX;
+
+    @Shadow
+    protected int startY;
+
+    @Shadow
+    protected int badgeMax;
+
+    @Shadow
+    protected ModsScreen screen;
+
+    @Shadow
     public abstract void drawBadge(GuiGraphicsExtractor graphics, FormattedCharSequence text, int outlineColor, int fillColor, int mouseX, int mouseY);
 
     @Inject(method = "draw", at = @At("RETURN"), require = 0)
@@ -34,11 +45,12 @@ public abstract class ModBadgeRendererMixin {
         String modId = this.mod.getId();
         if (modId == null) return;
 
-        boolean isLoaded = FabricLoader.getInstance().getModContainer(modId).isPresent();
+        // ModsScreen constructs the right-pane profile badge renderer at y = 48 with badgeMax = width - 28
+        boolean isDetailPane = (this.startY == 48) && (this.screen == null || this.badgeMax > this.screen.width / 2);
         boolean isStaged = ModStateManager.INSTANCE.isStaged(modId);
-        boolean isRegistryDisabled = DisabledModsRegistry.isDisabled(modId);
+        boolean isDisabled = ModStateManager.INSTANCE.isModDisabled(modId);
 
-        if (MenuConfig.get().warnDependencies) {
+        if (isDetailPane && MenuConfig.get().warnDependencies) {
             List<String> missing = ModDependencyAnalyzer.getMissing(modId);
             if (!missing.isEmpty()) {
                 drawBadge(graphics, Component.literal("Missing: " + missing.get(0)).getVisualOrderText(), 0xFFFF4444, 0x88551111, mouseX, mouseY);
@@ -47,24 +59,17 @@ public abstract class ModBadgeRendererMixin {
         }
 
         if (isStaged) {
-            boolean isUnloaded = !isLoaded && !isRegistryDisabled;
-            if (isUnloaded) {
-                drawBadge(graphics, Component.literal("Pending: Load").getVisualOrderText(), 0xFF55FF55, 0x88114411, mouseX, mouseY);
+            boolean nextState = ModStateManager.INSTANCE.getStagedState(modId);
+            if (nextState) {
+                drawBadge(graphics, Component.literal("Pending: Enable").getVisualOrderText(), 0xFF55FF55, 0x88114411, mouseX, mouseY);
             } else {
-                boolean nextState = ModStateManager.INSTANCE.getStagedState(modId);
-                if (nextState) {
-                    drawBadge(graphics, Component.literal("Pending: On").getVisualOrderText(), 0xFF55FF55, 0x88114411, mouseX, mouseY);
-                } else {
-                    drawBadge(graphics, Component.literal("Pending: Off").getVisualOrderText(), 0xFFFFAA00, 0x88553300, mouseX, mouseY);
-                }
+                drawBadge(graphics, Component.literal("Pending: Disable").getVisualOrderText(), 0xFFFFAA00, 0x88553300, mouseX, mouseY);
             }
             return;
         }
 
-        if (isRegistryDisabled) {
-            drawBadge(graphics, Component.literal("Disabled").getVisualOrderText(), 0xFFFF5555, 0x88551111, mouseX, mouseY);
-        } else if (!isLoaded) {
-            drawBadge(graphics, Component.literal("Unloaded").getVisualOrderText(), 0xFFFFCC00, 0x88554400, mouseX, mouseY);
+        if (isDetailPane && isDisabled) {
+            drawBadge(graphics, Component.literal("Disabled").getVisualOrderText(), 0xFFFF4444, 0x88661111, mouseX, mouseY);
         }
     }
 }

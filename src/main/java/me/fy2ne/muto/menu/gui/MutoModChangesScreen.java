@@ -1,6 +1,7 @@
 package me.fy2ne.muto.menu.gui;
 
 import me.fy2ne.muto.api.MutoApi;
+import me.fy2ne.muto.menu.automation.ModsFolderWatcher;
 import me.fy2ne.muto.mods.DiskMod;
 import me.fy2ne.muto.mods.ModStateManager;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -31,27 +32,41 @@ public final class MutoModChangesScreen extends Screen {
 
         populateChanges();
 
-        int btnW = 120;
-        int gap = 12;
-        int totalW = btnW * 2 + gap;
+        int btnW = 100;
+        int applyW = 120;
+        int gap = 8;
+        int totalW = btnW * 2 + applyW + gap * 2;
         int startX = (this.width - totalW) / 2;
-        int btnY = this.height - 30;
+        int btnY = this.height - 28;
 
         this.addRenderableWidget(
-                Button.builder(Component.literal("Cancel"), btn -> {
+                Button.builder(Component.literal("Discard"), btn -> {
+                    ModStateManager.INSTANCE.clearStaged();
                     if (this.minecraft != null) this.minecraft.setScreenAndShow(parent);
                 }).bounds(startX, btnY, btnW, 20).build()
         );
 
         this.addRenderableWidget(
+                Button.builder(Component.literal("Back"), btn -> {
+                    if (this.minecraft != null) this.minecraft.setScreenAndShow(parent);
+                }).bounds(startX + btnW + gap, btnY, btnW, 20).build()
+        );
+
+        this.addRenderableWidget(
                 Button.builder(Component.literal("Apply & Reload"), btn -> {
-                    ModStateManager.INSTANCE.applyFileRenames();
+                    ModsFolderWatcher.suppressForMs(10000);
+                    ModsFolderWatcher.setCommittingRenames(true);
+                    try {
+                        ModStateManager.INSTANCE.applyFileRenames();
+                    } finally {
+                        ModsFolderWatcher.setCommittingRenames(false);
+                    }
                     if (onConfirmed != null) {
                         onConfirmed.run();
                     } else if (this.minecraft != null) {
                         MutoApi.reloadWithBoundary(parent);
                     }
-                }).bounds(startX + btnW + gap, btnY, btnW, 20).build()
+                }).bounds(startX + (btnW + gap) * 2, btnY, applyW, 20).build()
         );
     }
 
@@ -106,9 +121,8 @@ public final class MutoModChangesScreen extends Screen {
 
     @Override
     public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
-        g.fill(0, 0, this.width, this.height, 0xD810141D);
         super.extractRenderState(g, mouseX, mouseY, delta);
-        g.text(this.font, Component.literal("§f§lReview Mod Changes Before Reload"), this.width / 2 - this.font.width("Review Mod Changes Before Reload") / 2, 16, 0xFFFFFFFF);
+        g.centeredText(this.font, Component.literal("§f§lReview Mod Changes"), this.width / 2, 16, 0xFFFFFFFF);
     }
 
     private final class ChangeListWidget extends ObjectSelectionList<ChangeEntry> {
@@ -137,11 +151,6 @@ public final class MutoModChangesScreen extends Screen {
         @Override
         protected boolean entriesCanBeSelected() {
             return false;
-        }
-
-        @Override
-        protected void extractListBackground(GuiGraphicsExtractor g) {
-            g.fill(0, this.getY(), this.width, this.getBottom(), 0x14000000);
         }
     }
 

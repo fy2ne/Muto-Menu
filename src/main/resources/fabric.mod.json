@@ -9,8 +9,8 @@
   ],
   "contact": {
     "homepage": "https://muto.fy2ne.me/menu",
-    "sources": "https://github.com/fy2ne/muto-menu",
-    "issues": "https://github.com/fy2ne/muto-menu/issues"
+    "sources": "https://github.com/fy2ne/Muto-Menu",
+    "issues": "https://github.com/fy2ne/Muto-Menu/issues"
   },
   "license": "Apache-2.0",
   "icon": "assets/muto_menu/icon.png",
@@ -31,7 +31,7 @@
     "fabric-api": ">=0.144.1",
     "minecraft": ">=26.1 <27.0",
     "java": ">=25",
-    "muto": ">=0.3.0-beta",
+    "muto": ">=0.1.0-beta",
     "modmenu": "*"
   }
 }

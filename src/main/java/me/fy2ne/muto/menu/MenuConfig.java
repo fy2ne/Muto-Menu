@@ -3,6 +3,7 @@ package me.fy2ne.muto.menu;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.fy2ne.muto.api.MutoApi;
+import me.fy2ne.muto.menu.automation.ModsFolderWatcher;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.Reader;
@@ -25,7 +26,13 @@ public final class MenuConfig {
 	}
 
 	private static Path file() {
-		return FabricLoader.getInstance().getConfigDir().resolve("muto-menu.json");
+		try {
+			var loader = FabricLoader.getInstance();
+			if (loader != null && loader.getConfigDir() != null) {
+				return loader.getConfigDir().resolve("muto-menu.json");
+			}
+		} catch (Throwable ignored) {}
+		return Path.of("config", "muto-menu.json");
 	}
 
 	public static void load() {
@@ -64,7 +71,7 @@ public final class MenuConfig {
 
 	public static void syncToRuntime() {
 		if (inst == null) return;
-		MutoApi.setFolderWatcherEnabled(inst.autoWatchFolder);
+		ModsFolderWatcher.setEnabled(inst.autoWatchFolder);
 		MutoApi.setAutoReloadResources(inst.autoReloadResources);
 	}
 }

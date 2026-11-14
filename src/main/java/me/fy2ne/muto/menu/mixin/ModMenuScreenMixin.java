@@ -1,10 +1,12 @@
 package me.fy2ne.muto.menu.mixin;
 
 import me.fy2ne.muto.api.MutoApi;
+import me.fy2ne.muto.MutoLog;
+import me.fy2ne.muto.menu.gui.ModMenuDiskAdapter;
 import me.fy2ne.muto.menu.gui.MutoModChangesScreen;
 import me.fy2ne.muto.menu.gui.MutoModFilter;
 import me.fy2ne.muto.engine.ModDependencyAnalyzer;
-import me.fy2ne.muto.mods.DisabledModsRegistry;
+import me.fy2ne.muto.mods.DiskMod;
 import me.fy2ne.muto.mods.ModStateManager;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -23,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 @Pseudo
@@ -58,6 +61,9 @@ public abstract class ModMenuScreenMixin extends Screen {
     private SpriteIconButton configureButton;
 
     @Shadow
+    protected Screen previousScreen;
+
+    @Shadow
     public abstract boolean getModHasConfigScreen(String modId);
 
     // Action buttons (native SpriteIconButton)
@@ -72,14 +78,16 @@ public abstract class ModMenuScreenMixin extends Screen {
     private SpriteIconButton muto$filterDisabledBtn;
     private SpriteIconButton muto$filterUnloadedBtn;
 
-    // Bottom save button
-    private Button muto$saveChangesBtn;
-
     @Inject(method = "safelyOpenConfigScreen", at = @At("HEAD"), cancellable = true, require = 0)
     private void muto$blockConfigForDisabled(String modId, CallbackInfo ci) {
-        if (modId != null && DisabledModsRegistry.isDisabled(modId)) {
+        if (modId != null && !ModStateManager.INSTANCE.isModLoaded(modId) && ModStateManager.INSTANCE.isModDisabled(modId)) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "init", at = @At("HEAD"), require = 0)
+    private void muto$syncDiskModsBeforeInit(CallbackInfo ci) {
+        ModMenuDiskAdapter.syncDiskMods();
     }
 
     @Inject(method = "init", at = @At("RETURN"))
@@ -129,28 +137,28 @@ public abstract class ModMenuScreenMixin extends Screen {
         int rightEdgeX = (configureButton != null) ? configureButton.getX() : (this.width - 24);
         int ay = (configureButton != null) ? configureButton.getY() : 48;
 
-        muto$actionDisableBtn = SpriteIconButton.builder(Component.literal("Disable Mod"), btn -> muto$triggerToggle(), true)
+        muto$actionDisableBtn = SpriteIconButton.builder(Component.literal("Disable Mod"), btn -> muto$triggerDisable(), true)
                 .size(20, 20)
                 .sprite(SPRITE_DISABLE, 16, 16)
                 .tooltip(Component.literal("Disable Mod"))
                 .build();
         muto$actionDisableBtn.setPosition(rightEdgeX - 22, ay);
 
-        muto$actionEnableBtn = SpriteIconButton.builder(Component.literal("Enable Mod"), btn -> muto$triggerToggle(), true)
+        muto$actionEnableBtn = SpriteIconButton.builder(Component.literal("Enable Mod"), btn -> muto$triggerEnable(), true)
                 .size(20, 20)
                 .sprite(SPRITE_ENABLE, 16, 16)
                 .tooltip(Component.literal("Enable Mod"))
                 .build();
         muto$actionEnableBtn.setPosition(rightEdgeX - 22, ay);
 
-        muto$actionLoadBtn = SpriteIconButton.builder(Component.literal("Load Mod"), btn -> muto$triggerToggle(), true)
+        muto$actionLoadBtn = SpriteIconButton.builder(Component.literal("Load Mod"), btn -> muto$triggerEnable(), true)
                 .size(20, 20)
                 .sprite(SPRITE_LOAD, 16, 16)
                 .tooltip(Component.literal("Load Mod"))
                 .build();
         muto$actionLoadBtn.setPosition(rightEdgeX, ay);
 
-        muto$actionRevertBtn = SpriteIconButton.builder(Component.literal("Revert"), btn -> muto$triggerToggle(), true)
+        muto$actionRevertBtn = SpriteIconButton.builder(Component.literal("Revert"), btn -> muto$triggerRevert(), true)
                 .size(20, 20)
                 .sprite(SPRITE_REVERT, 16, 16)
                 .tooltip(Component.literal("Pending Change (Click to revert)"))
@@ -167,87 +175,86 @@ public abstract class ModMenuScreenMixin extends Screen {
         this.addRenderableWidget(muto$actionLoadBtn);
         this.addRenderableWidget(muto$actionRevertBtn);
 
-        // 3. Bottom row: 3 equal buttons: Open Mods Folder (100), Save (100), Done (100)
-        AbstractWidget folderBtn = null;
-        AbstractWidget doneBtn = null;
+        // Intercept ModMenu's Done button directly on the widget
         for (var child : this.children()) {
-            if (child instanceof AbstractWidget w) {
-                if (w != muto$filterAllBtn && w != muto$filterActiveBtn && w != muto$filterDisabledBtn && w != muto$filterUnloadedBtn &&
-                    w != muto$actionDisableBtn && w != muto$actionEnableBtn && w != muto$actionLoadBtn && w != muto$actionRevertBtn) {
-                    if (w.getY() >= this.height - 38 && w.getHeight() <= 24) {
-                        String label = w.getMessage().getString().toLowerCase();
-                        if (label.contains("done") || label.contains("terminer") || label.contains("fertig")) {
-                            doneBtn = w;
-                        } else if (label.contains("folder") || label.contains("dossier") || label.contains("ordner")) {
-                            folderBtn = w;
+            if (child instanceof Button b) {
+                if (b.getY() >= this.height - 40 && b.getX() >= this.width / 2) {
+                    try {
+                        Field f = Button.class.getDeclaredField("onPress");
+                        f.setAccessible(true);
+                        Button.OnPress orig = (Button.OnPress) f.get(b);
+                        Button.OnPress wrapped = btn -> {
+                            if (ModStateManager.INSTANCE.hasStagedChanges()) {
+                                if (this.minecraft != null) {
+                                    this.minecraft.setScreenAndShow(new MutoModChangesScreen(this, () -> {
+                                        if (this.minecraft != null) {
+                                            MutoApi.reloadWithBoundary(new com.terraformersmc.modmenu.gui.ModsScreen(this.previousScreen));
+                                        }
+                                    }));
+                                }
+                            } else if (orig != null) {
+                                orig.onPress(btn);
+                            } else if (this.minecraft != null) {
+                                this.minecraft.setScreenAndShow(this.previousScreen);
+                            }
+                        };
+
+                        try {
+                            Field uField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                            uField.setAccessible(true);
+                            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) uField.get(null);
+                            long offset = unsafe.objectFieldOffset(f);
+                            unsafe.putObject(b, offset, wrapped);
+                        } catch (Throwable ignored) {
+                            f.set(b, wrapped);
                         }
+                    } catch (Throwable t) {
+                        MutoLog.warn("error wrapping ModMenu Done button: {}", t.getMessage());
                     }
+                    break;
                 }
             }
         }
 
-        muto$saveChangesBtn = Button.builder(Component.literal("Save"), btn -> {
+        muto$updateActionButtons();
+    }
+
+    @Inject(method = "updateSelectedEntry", at = @At("RETURN"), require = 0)
+    private void muto$onSelectedEntryChanged(com.terraformersmc.modmenu.gui.widget.entries.ModListEntry entry, CallbackInfo ci) {
+        muto$updateActionButtons();
+    }
+
+    @Inject(method = "onClose", at = @At("HEAD"), cancellable = true, require = 0)
+    private void muto$onClose(CallbackInfo ci) {
+        if (ModStateManager.INSTANCE.hasStagedChanges()) {
+            ci.cancel();
             if (this.minecraft != null) {
                 this.minecraft.setScreenAndShow(new MutoModChangesScreen(this, () -> {
                     if (this.minecraft != null) {
-                        this.minecraft.setScreenAndShow(null);
-                        MutoApi.reloadAsync().thenAccept(res -> {
-                            this.minecraft.execute(() -> {
-                                this.minecraft.setScreenAndShow(new com.terraformersmc.modmenu.gui.ModsScreen(null));
-                            });
-                        });
+                        MutoApi.reloadWithBoundary(new com.terraformersmc.modmenu.gui.ModsScreen(this.previousScreen));
                     }
                 }));
             }
-        })
-        .tooltip(Tooltip.create(Component.literal("Review staged mod changes and apply")))
-        .build();
-
-        int targetY = this.height - 28;
-        if (folderBtn != null) targetY = folderBtn.getY();
-
-        int btnW = 100;
-        int x1 = this.width / 2 - 154;
-        int x2 = this.width / 2 - 50;
-        int x3 = this.width / 2 + 54;
-
-        if (folderBtn != null) {
-            folderBtn.setX(x1);
-            folderBtn.setWidth(btnW);
-            folderBtn.setY(targetY);
         }
-
-        muto$saveChangesBtn.setX(x2);
-        muto$saveChangesBtn.setWidth(btnW);
-        muto$saveChangesBtn.setY(targetY);
-
-        if (doneBtn != null) {
-            doneBtn.setX(x3);
-            doneBtn.setWidth(btnW);
-            doneBtn.setY(targetY);
-        }
-
-        muto$updateSaveBtn();
-        muto$updateActionButtons();
-
-        this.addRenderableWidget(muto$saveChangesBtn);
     }
 
     private void muto$cycleFilter() {
         MutoModFilter.CURRENT = MutoModFilter.CURRENT.next();
         muto$updateFilterButtons();
         if (modList != null) {
+            ModMenuDiskAdapter.syncDiskMods();
             modList.reloadFilters();
         }
     }
 
-    private void muto$triggerToggle() {
+    private void muto$triggerDisable() {
         if (this.selected != null && this.selected.getMod() != null) {
             String modId = this.selected.getMod().getId();
             if (!ModStateManager.INSTANCE.isProtectedMod(modId)) {
-                ModStateManager.INSTANCE.stageToggle(modId);
+                DiskMod dm = ModStateManager.INSTANCE.findDiskMod(modId);
+                if (dm == null) return;
+                ModStateManager.INSTANCE.stageDisable(modId);
                 muto$updateActionButtons();
-                muto$updateSaveBtn();
                 if (modList != null) {
                     modList.reloadFilters();
                 }
@@ -255,10 +262,30 @@ public abstract class ModMenuScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "extractRenderState", at = @At("HEAD"), require = 0)
-    private void muto$onRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        muto$updateSaveBtn();
-        muto$updateActionButtons();
+    private void muto$triggerEnable() {
+        if (this.selected != null && this.selected.getMod() != null) {
+            String modId = this.selected.getMod().getId();
+            if (!ModStateManager.INSTANCE.isProtectedMod(modId)) {
+                DiskMod dm = ModStateManager.INSTANCE.findDiskMod(modId);
+                if (dm == null) return;
+                ModStateManager.INSTANCE.stageEnable(modId);
+                muto$updateActionButtons();
+                if (modList != null) {
+                    modList.reloadFilters();
+                }
+            }
+        }
+    }
+
+    private void muto$triggerRevert() {
+        if (this.selected != null && this.selected.getMod() != null) {
+            String modId = this.selected.getMod().getId();
+            ModStateManager.INSTANCE.revertStaging(modId);
+            muto$updateActionButtons();
+            if (modList != null) {
+                modList.reloadFilters();
+            }
+        }
     }
 
     private void muto$updateFilterButtons() {
@@ -268,18 +295,6 @@ public abstract class ModMenuScreenMixin extends Screen {
         muto$filterActiveBtn.visible = (f == MutoModFilter.ACTIVE);
         muto$filterDisabledBtn.visible = (f == MutoModFilter.DISABLED);
         muto$filterUnloadedBtn.visible = (f == MutoModFilter.UNLOADED);
-    }
-
-    private void muto$updateSaveBtn() {
-        if (muto$saveChangesBtn == null) return;
-        int count = ModStateManager.INSTANCE.getStagedCount();
-        if (count > 0) {
-            muto$saveChangesBtn.setMessage(Component.literal("§aSave (" + count + ")"));
-            muto$saveChangesBtn.active = true;
-        } else {
-            muto$saveChangesBtn.setMessage(Component.literal("Save"));
-            muto$saveChangesBtn.active = false;
-        }
     }
 
     private void muto$updateActionButtons() {
@@ -303,10 +318,9 @@ public abstract class ModMenuScreenMixin extends Screen {
         }
 
         boolean isProtected = ModStateManager.INSTANCE.isProtectedMod(modId);
-        boolean isLoaded = FabricLoader.getInstance().getModContainer(modId).isPresent();
-        boolean isRegistryDisabled = DisabledModsRegistry.isDisabled(modId);
-        boolean isDisabled = (!isLoaded && isRegistryDisabled) || (isLoaded && isRegistryDisabled);
-        boolean isUnloaded = !isLoaded && !isRegistryDisabled;
+        boolean isLoaded = ModStateManager.INSTANCE.isModLoaded(modId);
+        boolean isDisabled = ModStateManager.INSTANCE.isModDisabled(modId);
+        boolean isUnloaded = !isLoaded && !isDisabled;
         boolean isStaged = ModStateManager.INSTANCE.isStaged(modId);
 
         // Handle configure button for disabled mods: keep visible if mod supports config, but disable it with tooltip
@@ -378,14 +392,24 @@ public abstract class ModMenuScreenMixin extends Screen {
             muto$actionEnableBtn.active = true;
             muto$actionEnableBtn.setTooltip(Tooltip.create(Component.literal("Enable Mod" + missingNote)));
         } else {
+            DiskMod dm = ModStateManager.INSTANCE.findDiskMod(modId);
+            boolean isEmbedded = (dm == null);
+
             muto$actionDisableBtn.visible = true;
             muto$actionEnableBtn.visible = false;
             muto$actionLoadBtn.visible = false;
             muto$actionRevertBtn.visible = false;
-            muto$actionDisableBtn.active = !isProtected;
-            muto$actionDisableBtn.setTooltip(Tooltip.create(Component.literal(
-                    isProtected ? "Protected Mod (Cannot be disabled)" : "Disable Mod"
-            )));
+
+            if (isProtected) {
+                muto$actionDisableBtn.active = false;
+                muto$actionDisableBtn.setTooltip(Tooltip.create(Component.literal("Protected Mod (Cannot be disabled)")));
+            } else if (isEmbedded) {
+                muto$actionDisableBtn.active = false;
+                muto$actionDisableBtn.setTooltip(Tooltip.create(Component.literal("Embedded Library (Packaged inside another mod). Install standalone jar in /mods to toggle independently.")));
+            } else {
+                muto$actionDisableBtn.active = true;
+                muto$actionDisableBtn.setTooltip(Tooltip.create(Component.literal("Disable Mod")));
+            }
         }
     }
 }

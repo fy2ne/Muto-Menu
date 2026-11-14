@@ -1,8 +1,7 @@
 package me.fy2ne.muto.menu.mixin;
 
 import me.fy2ne.muto.menu.gui.MutoModFilter;
-import me.fy2ne.muto.mods.DisabledModsRegistry;
-import net.fabricmc.loader.api.FabricLoader;
+import me.fy2ne.muto.mods.ModStateManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,8 +18,8 @@ public abstract class ModListWidgetMixin {
         String modId = entry.getMod().getId();
         if (modId == null) return;
 
-        boolean isLoaded = FabricLoader.getInstance().getModContainer(modId).isPresent();
-        boolean isDisabled = DisabledModsRegistry.isDisabled(modId);
+        boolean isLoaded = ModStateManager.INSTANCE.isModLoaded(modId);
+        boolean isDisabled = ModStateManager.INSTANCE.isModDisabled(modId);
 
         MutoModFilter filter = MutoModFilter.CURRENT;
         if (filter == MutoModFilter.ACTIVE) {

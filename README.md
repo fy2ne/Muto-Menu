@@ -1,12 +1,12 @@
 # Muto Menu
 
-In-game mods screen for [Muto Runtime](https://github.com/fy2ne/muto). Toggle mods on and off, and reload after you drop a jar into `mods/`, with no game restart.
+In-game mods screen for [Muto Runtime](https://github.com/fy2ne/Muto-Runtime). Toggle mods on and off, and reload after you drop a jar into `mods/`, with no game restart.
 
 - Press `O` (rebindable, Controls > Misc) to open the screen
 - `mods/` is watched while you're on the title screen, changes trigger a reload
-- Needs Muto Runtime `0.3.x` installed alongside. Menu does not bundle it
+- Needs Muto Runtime `0.1.x` installed alongside. Menu does not bundle it
 
-Targets Minecraft 26.1 to 26.3 (`26.x` branch). Version matches Runtime: `0.3.0-beta+26.x`.
+Targets Minecraft 26.1 to 26.3 (`26.x` branch). Version matches Runtime: `0.1.0-beta+26.x`.
 
 ## Build
 

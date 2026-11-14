@@ -1,6 +1,6 @@
 # Muto Menu Overview
 
-Muto Menu is the native in-game interface for [Muto Runtime](https://github.com/fy2ne/muto). It provides a full mods management screen, live enable/disable toggling, hot-swapping, and audit history.
+Muto Menu is the native in-game interface for [Muto Runtime](https://github.com/fy2ne/Muto-Runtime). It provides a full mods management screen, live enable/disable toggling, hot-swapping, and audit history.
 
 ## Features
 
@@ -16,4 +16,4 @@ Muto Menu is the native in-game interface for [Muto Runtime](https://github.com/
 - **Minecraft**: 26.1 - 26.3 (`26.x`)
 - **Fabric Loader**: `>=0.16.0`
 - **Fabric API**: `>=0.144.1`
-- **Muto Runtime**: `~0.3.0-beta`
+- **Muto Runtime**: `~0.1.0-beta`

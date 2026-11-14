@@ -80,6 +80,18 @@ public final class MutoConfigScreen extends Screen {
                 .tooltip(Tooltip.create(Component.literal("Inspect previous reload logs, durations, and diffs")))
                 .build());
 
+        // Option 5: Dev Diagnostics & Simulator
+        this.addRenderableWidget(Button.builder(
+                Component.literal("§b⚡ Muto Dev Diagnostics & Simulator..."),
+                btn -> {
+                    if (this.minecraft != null) {
+                        this.minecraft.setScreenAndShow(new MutoDevScreen(this));
+                    }
+                })
+                .bounds(this.width / 2 - btnW, startY + gapY * 2 + 4, btnW * 2, btnH)
+                .tooltip(Tooltip.create(Component.literal("DevMode telemetry: screen transitions, file locks, dry-run simulations & phantom mod pruning")))
+                .build());
+
         // Done Button
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> {
             MenuConfig.save();

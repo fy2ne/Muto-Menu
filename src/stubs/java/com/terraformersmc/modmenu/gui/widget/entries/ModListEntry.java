@@ -10,6 +10,8 @@ public class ModListEntry extends ObjectSelectionList.Entry<ModListEntry> {
     public Mod mod;
     protected ModListWidget list;
     public Mod getMod() { return mod; }
+    public int getXOffset() { return 0; }
+    public int getYOffset() { return 0; }
 
     @Override
     public Component getNarration() {
