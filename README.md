@@ -1,6 +1,6 @@
 # Muto Menu
 
-In-game mods screen for [Muto Runtime](https://github.com/fy2ne/Muto-Runtime). Toggle mods on and off, and reload after you drop a jar into `mods/`, with no game restart.
+In-game mods screen for [Muto Runtime](https://github.com/fy2ne/Muto_runtime). Toggle mods on and off, and reload after you drop a jar into `mods/`, with no game restart.
 
 - Press `O` (rebindable, Controls > Misc) to open the screen
 - `mods/` is watched while you're on the title screen, changes trigger a reload

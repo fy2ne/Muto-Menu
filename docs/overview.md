@@ -1,6 +1,6 @@
 # Muto Menu Overview
 
-Muto Menu is the native in-game interface for [Muto Runtime](https://github.com/fy2ne/Muto-Runtime). It provides a full mods management screen, live enable/disable toggling, hot-swapping, and audit history.
+Muto Menu is the native in-game interface for [Muto Runtime](https://github.com/fy2ne/Muto_runtime). It provides a full mods management screen, live enable/disable toggling, hot-swapping, and audit history.
 
 ## Features
 
