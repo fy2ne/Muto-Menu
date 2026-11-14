@@ -1,0 +1,17 @@
+# Muto Menu
+
+> Native in-game ModMenu UI integration for Muto Runtime on Fabric 26.x (Minecraft 26.1 - 26.3, Java 25).
+
+## Version & Links
+- Version: 0.1.0-beta+26.x
+- Site: https://mutomenu.fy2ne.me
+- Documentation: https://mutomenu.fy2ne.me/docs
+- Source: https://github.com/fy2ne/Muto-Menu
+- Required Engine: https://muto.fy2ne.me
+
+## Capabilities
+- Injects Enable/Disable, Load, Revert, and filter controls directly into ModMenu ModsScreen.
+- Renders disabled (.jar.disabled) mod cards dimmed with a [Disabled] pill and staged changes with [Pending: On/Off] badges.
+- Prompts two-click dependency confirmation before disabling shared libraries (warnDependencies).
+- Watches .minecraft/mods with ModsFolderWatcher for automatic hot-swaps on JAR drop or deletion.
+- Provides MutoModChangesScreen, ReloadHistoryScreen, MutoDevScreen, and atomic config/muto-menu.json settings.
