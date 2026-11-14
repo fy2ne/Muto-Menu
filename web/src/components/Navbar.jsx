@@ -2,9 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { BookOpen, ChevronRight } from "lucide-react";
 
 export function Navbar({
-  brandName = "Muto",
-  brandTag = "RUNTIME",
-  logoSrc = "/logo-runtime.png",
+  brandName = "Muto Menu",
+  logoSrc = "/logo-nobg.png",
   logoClass = "",
   docsPath = "/docs",
 }) {
@@ -26,11 +25,6 @@ export function Navbar({
           <span className="font-sans text-[15px] font-semibold tracking-[-0.02em] text-[var(--color-fg-default)]">
             {brandName}
           </span>
-          {brandTag && (
-            <span className="rounded border border-[var(--color-border-default)] bg-[var(--color-surface-elevated)] px-1.5 py-0.5 font-mono text-[10px] tracking-[0.08em] text-[var(--color-fg-muted)]">
-              {brandTag}
-            </span>
-          )}
         </Link>
 
         <nav aria-label="Primary navigation">

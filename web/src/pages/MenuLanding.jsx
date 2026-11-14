@@ -82,7 +82,7 @@ export function MenuLanding() {
         <div className="mx-auto max-w-4xl text-center">
           <div className="unified-eyebrow mb-5 justify-center">
             <span className="unified-eyebrow-dot" />
-            <span>ModMenu Companion // Muto v0.1.0-beta</span>
+            <span>ModMenu Companion // Zero-Restart UI</span>
           </div>
 
           <h1 className="mx-auto max-w-3xl text-balance font-serif text-4xl font-normal leading-[1.05] tracking-[-0.025em] text-[var(--color-fg-default)] sm:text-5xl lg:text-[4.1rem]">

@@ -77,7 +77,6 @@ function AppShell() {
     <div className="flex min-h-screen flex-col justify-between bg-[var(--color-canvas-default)] text-[var(--color-fg-default)]">
       <Navbar
         brandName="Muto Menu"
-        brandTag="26.x"
         logoSrc="/logo-nobg.png"
         docsPath="/docs"
       />
