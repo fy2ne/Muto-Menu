@@ -78,7 +78,7 @@ function AppShell() {
       <Navbar
         brandName="Muto Menu"
         brandTag="26.x"
-        logoSrc={theme === "dark" ? "/logo-menu.png" : "/logo-menu-light.png"}
+        logoSrc="/logo-nobg.png"
         docsPath="/docs"
       />
 

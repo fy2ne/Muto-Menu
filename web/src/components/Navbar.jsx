@@ -21,7 +21,7 @@ export function Navbar({
           <img
             src={logoSrc}
             alt={brandName}
-            className={`h-7 w-7 object-contain transition-transform duration-200 group-hover:scale-105 ${logoClass}`}
+            className={`nav-logo-mark h-9 w-9 object-contain transition-transform duration-200 group-hover:scale-105 ${logoClass}`}
           />
           <span className="font-sans text-[15px] font-semibold tracking-[-0.02em] text-[var(--color-fg-default)]">
             {brandName}

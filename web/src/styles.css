@@ -33,6 +33,16 @@ body {
   color: #ffffff;
 }
 
+/* White transparent PNG logo -> pure black in light mode, pure white in dark mode */
+.nav-logo-mark {
+  filter: brightness(0);
+}
+
+.dark .nav-logo-mark,
+[data-theme="dark"] .nav-logo-mark {
+  filter: brightness(0) invert(1);
+}
+
 /* Marquee */
 @keyframes marquee {
   0% { transform: translateX(0%); }

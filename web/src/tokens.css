@@ -23,20 +23,20 @@
   --color-fg-muted: #52525b;
   --color-fg-subtle: #71717a;
 
-  /* Classic EssentialMod Royal Blue — strictly not cyan, not dark navy */
-  --color-brand-default: #134cff;
-  --color-brand-hover: #003be0;
+  /* Classic EssentialMod Royal Blue — consistent across Landing & Docs */
+  --color-brand-default: #2563ff;
+  --color-brand-hover: #184fe8;
   --color-brand-fg: #ffffff;
-  --color-brand-soft: rgba(19, 76, 255, 0.1);
-  --color-brand-glow: rgba(19, 76, 255, 0.26);
+  --color-brand-soft: rgba(37, 99, 255, 0.12);
+  --color-brand-glow: rgba(37, 99, 255, 0.28);
 
-  --color-crosshair: #134cff;
-  --color-link-fill: rgba(19, 76, 255, 0.2);
+  --color-crosshair: #2563ff;
+  --color-link-fill: rgba(37, 99, 255, 0.25);
 
   --code-bg: #f8fafc;
   --code-header-bg: #f1f5f9;
   --code-border: rgba(15, 23, 42, 0.09);
-  --tok-kw: #134cff;
+  --tok-kw: #2563ff;
   --tok-str: #047857;
   --tok-fn: #6d28d9;
   --tok-num: #b45309;
@@ -45,23 +45,23 @@
 
   --menu-spotlight: radial-gradient(
     ellipse 72% 48% at 50% 0%,
-    rgba(19, 76, 255, 0.14) 0%,
-    rgba(19, 76, 255, 0.04) 55%,
+    rgba(37, 99, 255, 0.16) 0%,
+    rgba(37, 99, 255, 0.05) 55%,
     transparent 82%
   );
   --glass-bg: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(15, 23, 42, 0.1);
-  --quad-glass: rgba(19, 76, 255, 0.04);
+  --quad-glass: rgba(37, 99, 255, 0.04);
 
-  --wm-glow-0: rgba(19, 76, 255, 0.28);
-  --wm-glow-1: rgba(37, 99, 235, 0.14);
-  --wm-glow-2: rgba(15, 23, 42, 0.06);
-  --wm-glow-3: rgba(15, 23, 42, 0.02);
-  --wm-rim-0: rgba(19, 76, 255, 0.36);
-  --wm-rim-1: rgba(37, 99, 235, 0.16);
-  --wm-rim-2: rgba(15, 23, 42, 0.06);
+  --wm-glow-0: rgba(37, 99, 255, 0.56);
+  --wm-glow-1: rgba(96, 150, 255, 0.42);
+  --wm-glow-2: rgba(37, 99, 255, 0.14);
+  --wm-glow-3: rgba(15, 23, 42, 0.045);
+  --wm-rim-0: rgba(37, 99, 255, 0.7);
+  --wm-rim-1: rgba(37, 99, 255, 0.26);
+  --wm-rim-2: rgba(15, 23, 42, 0.08);
 
-  --shadow-card: 0 2px 6px rgba(15, 23, 42, 0.05), 0 24px 60px -18px rgba(19, 76, 255, 0.12);
+  --shadow-card: 0 2px 6px rgba(15, 23, 42, 0.05), 0 24px 60px -18px rgba(37, 99, 255, 0.14);
   --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -84,14 +84,15 @@
   --color-fg-muted: #a1a1aa;
   --color-fg-subtle: #71717a;
 
-  --color-brand-default: #1f5cff;
-  --color-brand-hover: #3b71ff;
+  /* Same vivid EssentialMod Royal Blue on both Homepage & Docs */
+  --color-brand-default: #2d6bff;
+  --color-brand-hover: #497eff;
   --color-brand-fg: #ffffff;
-  --color-brand-soft: rgba(31, 92, 255, 0.15);
-  --color-brand-glow: rgba(31, 92, 255, 0.32);
+  --color-brand-soft: rgba(45, 107, 255, 0.18);
+  --color-brand-glow: rgba(45, 107, 255, 0.34);
 
-  --color-crosshair: #3b71ff;
-  --color-link-fill: rgba(59, 113, 255, 0.34);
+  --color-crosshair: #3b76ff;
+  --color-link-fill: rgba(73, 126, 255, 0.38);
 
   --code-bg: #07080d;
   --code-header-bg: #0c0e16;
@@ -105,21 +106,21 @@
 
   --menu-spotlight: radial-gradient(
     ellipse 74% 46% at 50% 0%,
-    rgba(31, 92, 255, 0.24) 0%,
-    rgba(31, 92, 255, 0.07) 52%,
+    rgba(45, 107, 255, 0.25) 0%,
+    rgba(45, 107, 255, 0.08) 52%,
     transparent 82%
   );
   --glass-bg: rgba(11, 13, 22, 0.72);
   --glass-border: rgba(255, 255, 255, 0.11);
-  --quad-glass: rgba(31, 92, 255, 0.06);
+  --quad-glass: rgba(45, 107, 255, 0.06);
 
-  --wm-glow-0: rgba(59, 113, 255, 0.36);
-  --wm-glow-1: rgba(31, 92, 255, 0.18);
-  --wm-glow-2: rgba(255, 255, 255, 0.055);
-  --wm-glow-3: rgba(255, 255, 255, 0.02);
-  --wm-rim-0: rgba(96, 145, 255, 0.45);
-  --wm-rim-1: rgba(31, 92, 255, 0.24);
-  --wm-rim-2: rgba(255, 255, 255, 0.08);
+  --wm-glow-0: rgba(219, 234, 254, 0.92);
+  --wm-glow-1: rgba(45, 107, 255, 0.68);
+  --wm-glow-2: rgba(37, 99, 255, 0.16);
+  --wm-glow-3: rgba(255, 255, 255, 0.035);
+  --wm-rim-0: rgba(219, 234, 254, 0.95);
+  --wm-rim-1: rgba(59, 123, 255, 0.62);
+  --wm-rim-2: rgba(255, 255, 255, 0.09);
 
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.55), 0 28px 80px -24px rgba(19, 76, 255, 0.25);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.55), 0 28px 80px -24px rgba(37, 99, 255, 0.28);
 }

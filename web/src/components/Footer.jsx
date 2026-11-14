@@ -20,16 +20,16 @@ export function Footer({
       <div className="lp-footer-wordmark-stage" aria-hidden="true">
         <svg viewBox="0 0 1120 215" className="lp-footer-wordmark-svg" role="presentation">
           <defs>
-            <radialGradient id={fillId} cx="90%" cy="38%" r="42%" fx="92%" fy="34%">
+            <radialGradient id={fillId} cx="12%" cy="40%" r="58%" fx="6%" fy="34%">
               <stop offset="0%" stopColor="var(--wm-glow-0)" />
-              <stop offset="40%" stopColor="var(--wm-glow-1)" />
-              <stop offset="75%" stopColor="var(--wm-glow-2)" />
+              <stop offset="30%" stopColor="var(--wm-glow-1)" />
+              <stop offset="68%" stopColor="var(--wm-glow-2)" />
               <stop offset="100%" stopColor="var(--wm-glow-3)" />
             </radialGradient>
-            <radialGradient id={rimId} cx="94%" cy="34%" r="32%" fx="95%" fy="32%">
+            <radialGradient id={rimId} cx="10%" cy="38%" r="48%" fx="6%" fy="34%">
               <stop offset="0%" stopColor="var(--wm-rim-0)" />
-              <stop offset="42%" stopColor="var(--wm-rim-1)" />
-              <stop offset="78%" stopColor="var(--wm-rim-2)" />
+              <stop offset="34%" stopColor="var(--wm-rim-1)" />
+              <stop offset="72%" stopColor="var(--wm-rim-2)" />
               <stop offset="100%" stopColor="transparent" />
             </radialGradient>
           </defs>
